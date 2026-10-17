@@ -201,7 +201,7 @@ const sfx = {
   nope: new Audio("NOPE.mp3"),
   yeah: new Audio("YEAH.mp3")
 };
-let nopePlayed = false; // NOPE.mp3 nur beim allerersten falschen Klick
+let nopePlayed = false; // NOPE.mp3 nur beim ersten falschen Klick jeder Frage
 for (const sound of Object.values(sfx)) sound.volume = .65;
 function playSfx(name){
   const sound = sfx[name];
@@ -245,6 +245,7 @@ function say(t, quiet){
 }
 function reset(){
   const it = Q[i];
+  nopePlayed = false;
   no.style.cssText = ""; yes.style.cssText = "";
   yes.textContent = it.ja || "Ja"; no.textContent = it.nein || "Nein";
   yes.className = "yes"; no.className = "no";
