@@ -38,6 +38,7 @@ button:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .yes,.next{background:var(--btn);color:var(--btn-ink);box-shadow:0 6px 16px var(--shadow)}
 .no{background:var(--no);color:var(--no-ink)}
 button:active{transform:scale(.94)}
+button:disabled{cursor:default}
 .react{font-size:19px;font-weight:700;color:var(--btn);margin:0 0 16px;min-height:58px;display:flex;align-items:center;justify-content:center;line-height:1.35}
 .shake{animation:shake .45s}
 @keyframes shake{20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-6px)}80%{transform:translateX(6px)}}
@@ -109,7 +110,7 @@ const Q = [
    y:"Du bist die Beste!",
    nos:["FALSCH. Ich verhungere hier gleich.","Nur ein winzig kleines Stück?","FALSCH. Ich gucke dich auch ganz lieb an. 🥺"],
    turn:"Okay, ein Stück 🍰", fin:"Ich nehme natürlich das größte. Hehe, Spaß."},
-  {q:"Gibst du mir die Käsekruste deiner Lasagne ab?", ja:"Ja", nein:"Ja", mode:"hoverflip",
+  {q:"Gibst du mir die Käsekruste deiner Lasagne ab?", ja:"Ja", nein:"Ja", mode:"wait",
    y:"RICHTIG. Denkst du, ich gebe dir die Nein-Option nicht? Doch, denn du würdest das NIEMALS tun. Wir wissen beide wieso 🤨"},
   {q:"Weißt du eigentlich, wie wunderschön du bist?", ja:"Ja, ich weiß es", nein:"Nein, keine Ahnung", mode:"texts",
    y:"Genau, und heute siehst du besonders gut aus. 😍",
@@ -133,6 +134,9 @@ const Q = [
 const $ = id => document.getElementById(id);
 const yes=$("yes"), no=$("no"), next=$("next"), row=$("row"), card=$("card"), pic=$("pic");
 const LIMIT = 5, reduce = matchMedia("(prefers-reduced-motion:reduce)").matches;
+const third = document.createElement("button"); third.className = "no hide"; third.textContent = "Nein";
+row.insertBefore(third, next);
+let waitTimer = 0;
 let i=0, k=0, pushes=0, armed=false, turned=false, busy=false, vanish=false, ox=0, oy=0, flip=false, scale=1;
 $("title").textContent = "Hey, " + NAME + "!";
 function setPic(s){ pic.src = IMG[s]; pic.classList.remove("bob"); void pic.offsetWidth; pic.classList.add("bob"); }
@@ -178,6 +182,11 @@ function reset(){
   no.style.cssText = ""; yes.style.cssText = "";
   yes.textContent = it.ja || "Ja"; no.textContent = it.nein || "Nein";
   yes.className = "yes"; no.className = "no";
+  yes.disabled = no.disabled = false; third.classList.add("hide"); clearTimeout(waitTimer);
+  if (it.mode === "wait"){ // beide Ja-Knöpfe sind gesperrt, nach 7 Sekunden erscheint "Nein"
+    yes.disabled = no.disabled = true;
+    waitTimer = setTimeout(() => third.classList.remove("hide"), 7000);
+  }
   row.insertBefore(yes, next); row.insertBefore(no, next);
   next.classList.add("hide"); $("react").textContent = "";
   k=0; pushes=0; armed=false; turned=false; busy=false; vanish=false; ox=oy=0; flip=false; scale=1;
@@ -198,7 +207,7 @@ function show(){
 }
 function done(t, ev){
   $("react").textContent = t; setPic("ok");
-  yes.classList.add("hide"); no.classList.add("hide"); next.classList.remove("hide");
+  yes.classList.add("hide"); no.classList.add("hide"); third.classList.add("hide"); next.classList.remove("hide");
   burst((ev && ev.clientX) || innerWidth / 2, (ev && ev.clientY) || innerHeight / 2);
   next.focus({preventScroll:true});
 }
@@ -278,6 +287,7 @@ yes.addEventListener("click", e => {
   if (it.finale) return finish();
   done(it.y, e);
 });
+third.addEventListener("click", e => done(Q[i].y, e));
 next.addEventListener("click", () => { i++; show(); });
 $("back").addEventListener("click", () => { if (i > 0){ i--; show(); } });
 $("start").addEventListener("click", () => {
