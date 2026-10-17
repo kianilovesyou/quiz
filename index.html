@@ -61,6 +61,29 @@ button:disabled{cursor:default}
 #gwin h2{font-family:Pacifico,cursive;font-weight:400;color:var(--btn);margin:6px 0}
 #gwin p{margin:0 0 10px;color:var(--soft)}
 @media (hover:none){.ghint{display:none}}
+@media (min-width:900px){
+  body{padding:28px}
+  .card{max-width:min(700px,92vw);padding:34px 44px 44px;border-radius:44px}
+  .pic{height:min(300px,28vh)}
+  h1{font-size:clamp(36px,5.6vh,50px);margin:14px 0 8px}
+  .sub{font-size:clamp(18px,2.8vh,24px);margin-bottom:24px}
+  .bar{height:14px;margin-bottom:8px}
+  .count{font-size:clamp(15px,2.3vh,19px);margin-bottom:18px}
+  .q{font-size:clamp(28px,4.6vh,40px);min-height:clamp(90px,13.5vh,135px);margin-bottom:20px}
+  .react{font-size:clamp(21px,3.3vh,28px);min-height:clamp(64px,9.5vh,92px);margin-bottom:20px}
+  .row{gap:18px;min-height:clamp(64px,10vh,90px)}
+  button{font-size:clamp(22px,3.5vh,30px);padding:clamp(14px,2.2vh,20px) clamp(28px,4vh,42px)}
+  .back{width:58px;height:58px;font-size:28px;top:20px;left:20px;padding:0}
+  .mute{width:60px;height:60px;font-size:28px;top:18px;right:18px;padding:0}
+  .end .big{font-size:80px}
+  #gcv{max-width:min(1200px,96vw,calc((100vh - 170px) * 4 / 3));border-radius:28px}
+  .ctl{max-width:min(1200px,96vw,calc((100vh - 170px) * 4 / 3))}
+  .ctl button{width:64px;height:64px;font-size:28px;padding:0}
+  .ghint{font-size:clamp(14px,2.2vh,18px)}
+  #gwin h2{font-size:clamp(34px,6vh,54px)}
+  #gwin p{font-size:clamp(18px,3vh,26px)}
+  #gwin .pic{height:min(380px,36vh)}
+}
 </style>
 </head>
 <body>
@@ -86,7 +109,7 @@ button:disabled{cursor:default}
   </div>
 </main>
 <div id="game" class="hide">
-  <canvas id="gcv" width="800" height="600"></canvas>
+  <canvas id="gcv" width="1600" height="1200"></canvas>
   <div class="ctl">
     <div><button id="bl" aria-label="Links">◀</button><button id="br" aria-label="Rechts">▶</button></div>
     <div><button id="bj" aria-label="Springen">⤒</button><button id="bb" aria-label="Pusten">💨</button></div>
@@ -169,7 +192,7 @@ function setPic(s){ pic.src = IMG[s]; pic.classList.remove("bob"); void pic.offs
 setPic("std");
 
 // Musik (startet nach dem ersten Tippen, Browser erlauben kein Autoplay mit Ton)
-const bgm = new Audio(MUSIC); bgm.loop = true; bgm.volume = .5;
+const bgm = new Audio(MUSIC); bgm.loop = true; bgm.volume = .35;
 const sfx = {
   jump: new Audio("JUMP.mp3"),
   puff: new Audio("PUST.mp3"),
@@ -428,7 +451,7 @@ function block(x, y, w, thick, seed){ // Kuchen-Block mit Zuckerguss
   }
 }
 function draw(){
-  g.setTransform(2, 0, 0, 2, 0, 0);
+  g.setTransform(4, 0, 0, 4, 0, 0);
   const gr = g.createLinearGradient(0, 0, 0, 300);
   gr.addColorStop(0, "#ffcfe6"); gr.addColorStop(.55, "#eedbff"); gr.addColorStop(1, "#fff0f7");
   g.fillStyle = gr; g.fillRect(0, 0, 400, 300);
