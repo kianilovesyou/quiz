@@ -197,8 +197,11 @@ const sfx = {
   jump: new Audio("JUMP.mp3"),
   puff: new Audio("PUST.mp3"),
   victory: new Audio("VICTORY.mp3"),
-  doof: new Audio("DOOF.mp3")
+  doof: new Audio("DOOF.mp3"),
+  nope: new Audio("NOPE.mp3"),
+  yeah: new Audio("YEAH.mp3")
 };
+let nopePlayed = false; // NOPE.mp3 nur beim allerersten falschen Klick
 for (const sound of Object.values(sfx)) sound.volume = .65;
 function playSfx(name){
   const sound = sfx[name];
@@ -235,8 +238,9 @@ function rain(){
     document.body.appendChild(h); setTimeout(() => h.remove(), 8500);
   }
 }
-function say(t){
+function say(t, quiet){
   $("react").textContent = t; setPic("bad");
+  if (!quiet && !nopePlayed){ nopePlayed = true; playSfx("nope"); }
   card.classList.remove("shake"); void card.offsetWidth; card.classList.add("shake");
 }
 function reset(){
@@ -268,12 +272,13 @@ function show(){
   $("fill").style.width = (i / Q.length * 100) + "%";
 }
 function done(t, ev){
-  $("react").textContent = t; setPic("ok");
+  $("react").textContent = t; setPic("ok"); playSfx("yeah");
   yes.classList.add("hide"); no.classList.add("hide"); third.classList.add("hide"); next.classList.remove("hide");
   burst((ev && ev.clientX) || innerWidth / 2, (ev && ev.clientY) || innerHeight / 2);
   next.focus({preventScroll:true});
 }
 function finish(){
+  playSfx("yeah");
   $("fill").style.width = "100%"; setPic("ok");
   card.classList.add("end"); $("back").classList.add("hide");
   $("count").textContent = "Fertig! 🎉";
@@ -289,7 +294,7 @@ function growYes(big){
 function push(e){
   const it = Q[i];
   if (it.mode !== "repel" || !armed) return;
-  if (vanish){ no.classList.add("hide"); say(it.gone); setPic("std"); return; }
+  if (vanish){ no.classList.add("hide"); say(it.gone, true); setPic("std"); return; }
   if (pushes >= LIMIT) return;
   pushes++;
   if (pushes === 1) $("react").textContent = it.push || "";
